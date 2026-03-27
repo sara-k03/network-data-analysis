@@ -29,15 +29,22 @@ for a, filepath in files.items():
     all_bc[a] = np.array(list(edge_betweenness.values()))
 
 # --- Shared bin edges across all a-values (req. 4) ---
-global_min = min(bc.min() for bc in all_bc.values())
+# global_min = min(bc.min() for bc in all_bc.values())
+# global_max = max(bc.max() for bc in all_bc.values())
+
+threshold = 0  # tune this value to cut off the spike
+
+global_min = threshold
 global_max = max(bc.max() for bc in all_bc.values())
-bin_edges = np.linspace(global_min, global_max, 51)  # 51 edges = 50 bins
+bin_edges = np.linspace(global_min, global_max, 51) # 51 edges = 51 bins
 
 # --- Plot ---
 fig, ax = plt.subplots(figsize=(8, 5))
 
 for a, color in zip(a_values, colors):
     bc_values = all_bc[a]
+
+    bc_values = bc_values[bc_values >= threshold]  # exclude values below threshold, since they're near 0
 
     counts, _ = np.histogram(bc_values, bins=bin_edges)       # req. 4: shared bins
     bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
@@ -57,6 +64,8 @@ ax.legend(fontsize=11)
 plt.tick_params(axis='both', labelsize=12)
 plt.title("Edge Betweenness Centrality Distribution by Kick Factor, α", fontsize=13)
 plt.tight_layout()
-plt.savefig("visualizations/Edge-BC-Histogram.png", dpi=300)
-plt.savefig("visualizations/Edge-BC-Histogram.pdf")
-plt.show()
+plt.savefig("visualizations/Edge-BC-Histogram-Version2.png", dpi=300)
+plt.savefig("visualizations/Edge-BC-Histogram-Version2.pdf")
+# plt.savefig("visualizations/Edge-BC-Histogram.png", dpi=300)
+# plt.savefig("visualizations/Edge-BC-Histogram.pdf")
+# plt.show()

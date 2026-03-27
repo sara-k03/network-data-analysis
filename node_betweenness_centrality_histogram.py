@@ -29,7 +29,10 @@ for a, filepath in files.items():
     all_bc[a] = np.array(list(betweenness.values()))
 
 # --- Shared bin edges across all a-values ---
-global_min = min(bc.min() for bc in all_bc.values())
+# global_min = min(bc.min() for bc in all_bc.values())
+# global_max = max(bc.max() for bc in all_bc.values())
+
+global_min = min(bc[bc > 0].min() for bc in all_bc.values())
 global_max = max(bc.max() for bc in all_bc.values())
 bin_edges = np.linspace(global_min, global_max, 51)
 
@@ -39,10 +42,7 @@ fig, ax = plt.subplots(figsize=(8, 5))
 for a, color in zip(a_values, colors):
     bc_values = all_bc[a]
 
-    # no zeros
-    # for i in len(bc_values):
-    #     if bc_values[i] == 0:
-            
+    bc_values = bc_values[bc_values > 0]  # exclude zeros   
 
     counts, _ = np.histogram(bc_values, bins=bin_edges)
     bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
@@ -62,8 +62,8 @@ ax.legend(fontsize=11)
 plt.tick_params(axis='both', labelsize=12)
 plt.title("Node Betweenness Centrality Distribution by Kick Factor, α", fontsize=13)
 plt.tight_layout()
-plt.savefig("Node-BC-Histogram.png", dpi=300)
-plt.savefig("Node-BC-Histogram.pdf")
-# plt.savefig("Node-BC-Histogram-Log.png", dpi=300)
-# plt.savefig("Node-BC-Histogram-Log.pdf")
-plt.show()
+plt.savefig("visualizations/Node-BC-Histogram-Version2.png", dpi=300)
+plt.savefig("visualizations/Node-BC-Histogram-Version2.pdf")
+# plt.savefig("visualizations/Node-BC-Histogram.png", dpi=300)
+# plt.savefig("visualizations/Node-BC-Histogram.pdf")
+# plt.show()
